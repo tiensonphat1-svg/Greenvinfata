@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Green DTC RTO</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: one long mobile-first page. Hero pairs the offer with a 12-month payment ledger that ends in ownership. */
+:root{
+  --bg:#F3F6F4; --surface:#FFFFFF; --surface2:#E8F0EB; --fg:#10241C; --muted:#4F675C; --line:#CFDDD4;
+  --brand:#0F5A41; --brand-fg:#FFFFFF; --cta:#F2C230; --cta-fg:#14231C; --warn:#B4531A; --ok:#0F7A4F;
+  --font:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0B1B16; --surface:#112A22; --surface2:#17362C; --fg:#E9F2ED; --muted:#98B3A7; --line:#25483B;
+  --brand:#1B7A58; --brand-fg:#FFFFFF; --warn:#F0A064; --ok:#58D6A0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B1B16; --surface:#112A22; --surface2:#17362C; --fg:#E9F2ED; --muted:#98B3A7; --line:#25483B;
+  --brand:#1B7A58; --brand-fg:#FFFFFF; --warn:#F0A064; --ok:#58D6A0; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 var(--font);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{margin:0;line-height:1.12;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+/* header */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);border-bottom:1px solid var(--line);
+  margin-left:calc(-1*max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1*max(16px,env(safe-area-inset-right,0px)));
+  padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-weight:800;font-size:17px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+.mark{width:30px;height:30px;border-radius:8px;background:var(--brand);color:var(--brand-fg);display:grid;place-items:center;font-size:13px;font-weight:800}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 22px;border-radius:999px;border:2px solid transparent;
+  font:700 15px var(--font);text-decoration:none;cursor:pointer}
+.btn.cta{background:var(--cta);color:var(--cta-fg)}
+.btn.ghost{border-color:var(--fg);background:transparent;color:var(--fg)}
+.btn.sm{min-height:40px;padding:0 16px;font-size:14px}
+.btn:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--cta);outline-offset:2px}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding-block:48px 40px}
+.hero h1{font-size:clamp(34px,6vw,60px);font-weight:800;margin-top:14px}
+.hero h1 em{font-style:normal;background:linear-gradient(transparent 62%,var(--cta) 62% 92%,transparent 92%)}
+.lead{margin-top:18px;font-size:18px;color:var(--muted);max-width:52ch}
+.terms{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.terms span{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 12px;font-size:14px;font-weight:600}
+.terms b{font-family:var(--mono);color:var(--brand)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .terms b{color:var(--ok)}}
+:root[data-theme="dark"] .terms b{color:var(--ok)}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.note{margin-top:14px;font-size:13px;color:var(--muted)}
+
+/* ledger */
+.ledger{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px}
+.ledger h2{font-size:18px}
+.cells{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
+.cell{border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center;background:var(--surface2)}
+.cell small{display:block;font-size:11px;color:var(--muted);font-weight:600}
+.cell b{font-family:var(--mono);font-size:13px}
+.cell.own{grid-column:1/-1;background:var(--brand);color:var(--brand-fg);border-color:var(--brand);padding:12px;font-weight:800;font-size:15px}
+.cell.own small{color:inherit;opacity:.8}
+.ledger .sum{margin-top:14px;display:flex;justify-content:space-between;gap:12px;font-size:14px;color:var(--muted);flex-wrap:wrap}
+.ledger .sum b{color:var(--fg)}
+
+section.block{padding-block:40px;border-top:1px solid var(--line)}
+section.block>.wrap>h2{font-size:clamp(24px,3.6vw,34px);font-weight:800;margin-top:8px}
+.sub{color:var(--muted);margin-top:10px;max-width:62ch}
+
+/* models */
+.models{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:24px}
+.model{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.model.pick{border:2px solid var(--brand)}
+.tag{align-self:flex-start;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:var(--brand);color:var(--brand-fg);border-radius:999px;padding:3px 10px}
+.model h3{font-size:19px}
+.model .price{font-family:var(--mono);font-weight:700;font-size:26px}
+.model .price small{font-family:var(--font);font-size:13px;color:var(--muted);font-weight:500}
+.model dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px}
+.model dt{color:var(--muted)}
+.model dd{margin:0;text-align:right;font-family:var(--mono);font-weight:500}
+
+/* calculator */
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:24px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px}
+.field{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.field:last-child{margin-bottom:0}
+.field label,.flabel{display:flex;justify-content:space-between;gap:10px;font-weight:600;font-size:14px}
+.field label output{font-family:var(--mono);color:var(--brand);font-weight:700}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .field label output{color:var(--ok)}}
+:root[data-theme="dark"] .field label output{color:var(--ok)}
+input[type=range]{width:100%;accent-color:var(--brand);min-height:28px}
+input[type=text],input[type=number],select{width:100%;min-height:46px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font:500 15px var(--font)}
+.rows{display:flex;flex-direction:column;gap:10px;min-width:0}
+.row{display:flex;justify-content:space-between;gap:12px;font-size:15px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.row span:last-child{font-family:var(--mono);font-weight:700;text-align:right}
+.row.neg span:last-child{color:var(--warn)}
+.result{margin-top:4px;background:var(--brand);color:var(--brand-fg);border-radius:14px;padding:16px;text-align:center}
+.result small{display:block;font-size:12px;letter-spacing:.12em;font-weight:700;opacity:.85}
+.result b{font-family:var(--mono);font-size:30px;display:block;margin-top:2px}
+.result.low{background:var(--warn)}
+.fine{font-size:13px;color:var(--muted);margin-top:14px}
+
+/* compare + steps */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+.vs div{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+.vs b.big{display:block;font-family:var(--mono);font-size:26px;margin-top:6px}
+.steps{list-style:none;margin:24px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;counter-reset:s}
+.steps li{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;counter-increment:s}
+.steps li::before{content:"Bước " counter(s);display:block;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.steps b{display:block;font-size:16px;margin-bottom:4px}
+.steps span{font-size:14px;color:var(--muted)}
+
+/* faq */
+.faq{margin-top:20px;border-top:1px solid var(--line)}
+details{border-bottom:1px solid var(--line);padding:16px 0}
+summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--mono);font-size:20px;line-height:1}
+details[open] summary::after{content:"−"}
+details p{margin-top:10px;color:var(--muted);max-width:70ch}
+
+/* register */
+.reg{display:grid;grid-template-columns:.9fr 1.1fr;gap:32px;align-items:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px}
+.msg{margin-top:16px;border:1px dashed var(--brand);border-radius:12px;padding:14px;background:var(--surface2);font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere;user-select:all}
+.hot{font-family:var(--mono);font-size:28px;font-weight:700;margin-top:12px;user-select:all}
+.status{min-height:22px;margin-top:10px;font-size:14px;font-weight:600;color:var(--ok)}
+.err{color:var(--warn)}
+
+footer{border-top:1px solid var(--line);padding-block:28px 40px;font-size:13px;color:var(--muted)}
+footer .wrap{display:flex;flex-direction:column;gap:6px}
+
+@media (max-width:860px){
+  .hero,.reg,.calc{grid-template-columns:1fr}
+  .models,.steps{grid-template-columns:1fr 1fr}
+  .hero{padding-block:32px 28px}
+}
+@media (max-width:560px){
+  .models,.steps,.vs{grid-template-columns:1fr}
+  .btn{width:100%}
+  header .btn{width:auto}
+  .calc,.card{padding:18px}
+}
+@media (prefers-reduced-motion:no-preference){.btn{transition:transform .12s}.btn:active{transform:translateY(1px)}}
+/* chat Yến */
+.chat-fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;display:none;align-items:center;gap:10px;min-height:54px;padding:0 20px 0 8px;border-radius:999px;border:0;background:var(--brand);color:var(--brand-fg);font:700 15px var(--font);cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+.chat-fab.on{display:inline-flex}
+.chat-fab .av,.chat-head .av{width:38px;height:38px;border-radius:50%;background:var(--cta);color:var(--cta-fg);display:grid;place-items:center;font-weight:800;font-size:16px;flex:none}
+.chat{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:30;width:min(400px,calc(100vw - 32px));height:min(600px,calc(100% - 32px - env(safe-area-inset-bottom,0px) - env(safe-area-inset-top,0px)));display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.35)}
+.chat[hidden]{display:none}
+.chat-head{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--brand);color:var(--brand-fg)}
+.chat-head div.t{flex:1;min-width:0;line-height:1.25}
+.chat-head b{display:block;font-size:16px}
+.chat-head span{font-size:12px;opacity:.85}
+.chat-head button{background:transparent;border:0;color:inherit;font-size:24px;cursor:pointer;min-width:40px;min-height:40px;line-height:1}
+.chat-log{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
+.bub{max-width:86%;padding:10px 13px;border-radius:16px;font-size:15px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.bub.bot{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:4px}
+.bub.me{align-self:flex-end;background:var(--cta);color:var(--cta-fg);border-bottom-right-radius:4px}
+.bub.wait{color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 14px 10px;background:var(--bg)}
+.chips button{border:1px solid var(--brand);background:var(--surface);color:var(--fg);border-radius:999px;padding:7px 12px;font:600 13px var(--font);cursor:pointer}
+.chat-form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line);background:var(--surface)}
+.chat-form input{flex:1;min-width:0;min-height:44px}
+.chat-form button{min-height:44px;padding:0 18px;border-radius:12px;border:0;background:var(--cta);color:var(--cta-fg);font:700 15px var(--font);cursor:pointer}
+.chat-form button:disabled{opacity:.5;cursor:default}
+.chat-note{font-size:11px;color:var(--muted);text-align:center;padding:0 12px 8px;background:var(--surface)}
+</style>
+</head>
+<body>
+
+
+<header>
+  <div class="wrap">
+    <div class="brand"><span class="mark">RTO</span> Green DTC RTO</div>
+    <a class="btn cta sm" href="#dang-ky">Đăng ký</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Thuê để sở hữu · Xe máy điện · TP. Hồ Chí Minh</div>
+      <h1>Cọc 2 triệu, nhận xe, chạy và <em>sở hữu xe sau 12 tháng</em></h1>
+      <p class="lead">Dành cho người chưa có xe nhưng muốn chạy xe công nghệ. Bạn trả góp mỗi tháng, thanh toán đủ 12 kỳ thì xe đứng tên bạn.</p>
+      <div class="terms">
+        <span>Cọc <b>2.000.000đ</b></span>
+        <span>Từ <b>1.880.000đ</b>/tháng</span>
+        <span><b>12</b> kỳ thanh toán</span>
+      </div>
+      <div class="actions">
+        <a class="btn cta" href="#dang-ky">Đăng ký tư vấn</a>
+        <a class="btn ghost" href="#tinh-thu-nhap">Tính thu nhập thử</a>
+      </div>
+      <p class="note">Hợp đồng thuê để sở hữu (RTO) có nghĩa vụ trả tiền đều đặn hằng tháng, kể cả tháng bạn không chạy. Đọc kỹ điều khoản bên dưới trước khi cọc.</p>
+    </div>
+    <aside class="ledger" aria-label="Lịch thanh toán 12 tháng">
+      <h2>Sổ thanh toán 12 tháng</h2>
+      <p class="sub" style="margin-top:6px;font-size:14px">Ví dụ với dòng Feliz S II, 2.300.000đ mỗi tháng.</p>
+      <div class="cells" id="cells"></div>
+      <div class="sum"><span>Tổng 12 kỳ</span><b class="mono">27.600.000đ</b></div>
+    </aside>
+  </section>
+
+  <section class="block" id="bang-gia">
+    <div class="eyebrow">Bảng giá</div>
+    <h2>Chọn dòng xe và số tiền trả mỗi tháng</h2>
+    <p class="sub">Tổng chi trả là số tiền bạn đưa ra qua 12 kỳ, chưa gồm tiền sạc, bảo hiểm tự chọn và chi phí cá nhân. Cọc 2.000.000đ được trừ vào kỳ đầu tiên.</p>
+    <div class="models">
+      <article class="model">
+        <h3>VinFast Evo 200</h3>
+        <div class="price">1.880.000đ <small>/ tháng</small></div>
+        <dl>
+          <dt>Số kỳ</dt><dd>12</dd>
+          <dt>Tổng chi trả</dt><dd id="t-evo"></dd>
+          <dt>Cọc</dt><dd>2.000.000đ</dd>
+        </dl>
+      </article>
+      <article class="model pick">
+        <span class="tag">Nhiều người chọn</span>
+        <h3>VinFast Feliz S II</h3>
+        <div class="price">2.300.000đ <small>/ tháng</small></div>
+        <dl>
+          <dt>Số kỳ</dt><dd>12</dd>
+          <dt>Tổng chi trả</dt><dd id="t-feliz"></dd>
+          <dt>Cọc</dt><dd>2.000.000đ</dd>
+        </dl>
+      </article>
+      <article class="model">
+        <h3>VinFast Klara S II</h3>
+        <div class="price">2.500.000đ <small>/ tháng</small></div>
+        <dl>
+          <dt>Số kỳ</dt><dd>12</dd>
+          <dt>Tổng chi trả</dt><dd id="t-klara"></dd>
+          <dt>Cọc</dt><dd>2.000.000đ</dd>
+        </dl>
+      </article>
+    </div>
+    <p class="fine">Tên dòng xe thuộc về nhà sản xuất VinFast. Trang này không phải trang của VinFast.</p>
+  </section>
+
+  <section class="block" id="tinh-thu-nhap">
+    <div class="eyebrow">Tính thu nhập</div>
+    <h2>Thử tính phần còn lại sau khi trả tiền xe</h2>
+    <p class="sub">Kéo thanh trượt theo thói quen chạy của bạn. Con số chỉ là ước tính theo các giả định ghi dưới bảng, không phải mức thu nhập được cam kết.</p>
+    <div class="calc">
+      <div>
+        <div class="field">
+          <label for="trips">Số cuốc mỗi ngày <output id="o-trips"></output></label>
+          <input type="range" id="trips" min="8" max="30" value="18">
+        </div>
+        <div class="field">
+          <label for="days">Số ngày chạy mỗi tháng <output id="o-days"></output></label>
+          <input type="range" id="days" min="15" max="30" value="26">
+        </div>
+        <div class="field">
+          <label for="fare">Doanh thu trung bình mỗi cuốc (đồng)</label>
+          <input type="number" id="fare" min="10000" max="100000" step="1000" value="38000" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label for="rent">Tiền trả xe mỗi tháng</label>
+          <select id="rent">
+            <option value="1880000">Evo 200 · 1.880.000đ</option>
+            <option value="2300000" selected>Feliz S II · 2.300.000đ</option>
+            <option value="2500000">Klara S II · 2.500.000đ</option>
+          </select>
+        </div>
+      </div>
+      <div class="rows">
+        <div class="row"><span>Doanh thu gộp</span><span id="r-gross"></span></div>
+        <div class="row neg"><span>Phí nền tảng (15%)</span><span id="r-fee"></span></div>
+        <div class="row neg"><span>Tiền sạc (ước tính)</span><span id="r-charge"></span></div>
+        <div class="row neg"><span>Tiền trả xe</span><span id="r-rent"></span></div>
+        <div class="result" id="result"><small>CÒN LẠI MỖI THÁNG, TRƯỚC KHI TRỪ CHI PHÍ KHÁC</small><b id="r-net"></b></div>
+        <p class="fine" id="r-note"></p>
+      </div>
+    </div>
+    <p class="fine">Giả định: phí nền tảng 15% và tiền sạc 396.000đ mỗi tháng. Doanh thu mỗi cuốc, số cuốc và số ngày chạy thay đổi theo khu vực, giờ chạy và nhu cầu thực tế. Chưa tính bảo dưỡng, gửi xe, điện thoại, thuế và các khoản cá nhân.</p>
+  </section>
+
+  <section class="block">
+    <div class="eyebrow">So sánh nhiên liệu</div>
+    <h2>Xe điện tiết kiệm bao nhiêu tiền nhiên liệu</h2>
+    <div class="vs">
+      <div><span class="eyebrow">Xe xăng, ước tính</span><b class="big">1.800.000đ</b><p class="fine" style="margin-top:6px">tiền xăng mỗi tháng</p></div>
+      <div><span class="eyebrow">Xe điện, ước tính</span><b class="big">396.000đ</b><p class="fine" style="margin-top:6px">tiền sạc mỗi tháng</p></div>
+    </div>
+    <p class="fine">Chênh lệch ước tính khoảng 1.404.000đ mỗi tháng. Mức thực tế phụ thuộc quãng đường và giá điện, xăng tại thời điểm bạn chạy.</p>
+  </section>
+
+  <section class="block">
+    <div class="eyebrow">Quy trình</div>
+    <h2>Từ đăng ký đến nhận xe</h2>
+    <ol class="steps">
+      <li><b>Đăng ký</b><span>Gửi họ tên và số điện thoại. Bên mình gọi lại tư vấn.</span></li>
+      <li><b>Cọc và duyệt hồ sơ</b><span>Cọc 2.000.000đ, kiểm tra hồ sơ khi bạn mang giấy tờ đến ký hợp đồng.</span></li>
+      <li><b>Nhận xe và hướng dẫn</b><span>Nhận xe, được hướng dẫn cách dùng ứng dụng chạy xe.</span></li>
+      <li><b>Chạy và trả hằng tháng</b><span>Trả đủ 12 kỳ thì làm thủ tục sang tên xe cho bạn.</span></li>
+    </ol>
+  </section>
+
+  <section class="block">
+    <div class="eyebrow">Câu hỏi thường gặp</div>
+    <h2>Những điều nên hỏi trước khi cọc</h2>
+    <div class="faq">
+      <details open><summary>Cọc 2.000.000đ có được hoàn lại không?</summary><p>Tiền cọc được trừ vào kỳ thanh toán đầu tiên. Nếu bạn hủy trước khi nhận xe, tiền cọc được hoàn trong 3 ngày.</p></details>
+      <details><summary>Tháng nào không chạy có phải trả tiền xe không?</summary><p>Có. Đây là hợp đồng thuê để sở hữu, bạn trả đều mỗi tháng dù có chạy hay không. Đây cũng là điều kiện để xe thuộc về bạn sau 12 tháng.</p></details>
+      <details><summary>Sau 12 tháng xe có thuộc về tôi không?</summary><p>Có. Khi bạn thanh toán đủ 12 kỳ, bên mình làm thủ tục sang tên cho bạn. Số tiền phải trả được ghi rõ trong hợp đồng.</p></details>
+      <details><summary>Thu nhập mỗi ngày là bao nhiêu?</summary><p>Thu nhập phụ thuộc số cuốc, khu vực và giờ bạn chạy, nên không có mức cố định. Hãy dùng bảng tính phía trên để ước tính, và hỏi tư vấn viên về số liệu thực tế của người đang chạy.</p></details>
+      <details><summary>Cần chuẩn bị giấy tờ gì?</summary><p>Căn cước công dân và các giấy tờ cần cho hợp đồng. Bạn đưa giấy tờ khi gặp trực tiếp để ký, không cần gửi qua form trên trang này.</p></details>
+    </div>
+  </section>
+
+  <section class="block" id="dang-ky">
+    <div class="reg">
+      <div>
+        <div class="eyebrow">Đăng ký tư vấn</div>
+        <h2 style="font-size:clamp(24px,3.6vw,34px);font-weight:800;margin-top:8px">Gọi hoặc nhắn Zalo để giữ xe</h2>
+        <p class="sub">Điền thông tin bên cạnh để tạo sẵn tin nhắn, sau đó sao chép và gửi qua Zalo. Hoặc gọi thẳng cho bên mình.</p>
+        <div class="hot" id="hotline">0794 866 822</div>
+        <div class="actions">
+          <a class="btn cta" href="https://zalo.me/0794866822" target="_blank" rel="noopener">Nhắn Zalo</a>
+          <a class="btn ghost" href="tel:0794866822">Gọi hotline</a>
+        </div>
+      </div>
+      <form class="card" id="form" novalidate>
+        <div class="field"><label for="f-name">Họ và tên</label><input type="text" id="f-name" autocomplete="name" placeholder="Nguyễn Văn A"></div>
+        <div class="field"><label for="f-phone">Số điện thoại</label><input type="text" id="f-phone" inputmode="tel" autocomplete="tel" placeholder="09xx xxx xxx"></div>
+        <div class="field"><label for="f-area">Khu vực</label>
+          <select id="f-area"><option>TP. Hồ Chí Minh</option><option>Hà Nội</option><option>Bình Dương</option><option>Đồng Nai</option><option>Đà Nẵng</option></select></div>
+        <div class="field"><label for="f-model">Dòng xe quan tâm</label>
+          <select id="f-model"><option>Evo 200 (1.880.000đ/tháng)</option><option selected>Feliz S II (2.300.000đ/tháng)</option><option>Klara S II (2.500.000đ/tháng)</option></select></div>
+        <button class="btn cta" type="submit" style="width:100%">Tạo tin nhắn đăng ký</button>
+        <div class="status" id="status" role="status"></div>
+        <div id="out" hidden>
+          <div class="msg" id="msg"></div>
+          <div class="actions">
+            <button class="btn ghost sm" type="button" id="copy">Sao chép tin nhắn</button>
+            <a class="btn cta sm" href="https://zalo.me/0794866822" target="_blank" rel="noopener">Mở Zalo</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2025 Green DTC RTO · Chương trình thuê để sở hữu xe điện cho tài xế.</span>
+    <span>Thông tin trên trang mang tính tham khảo. Điều khoản chính thức nằm trong hợp đồng hai bên ký.</span>
+  </div>
+</footer>
+
+<button class="chat-fab" id="chatFab" type="button" aria-label="Chat với Yến, trợ lý tư vấn"><span class="av">Y</span>Chat với Yến</button>
+<div class="chat" id="chat" hidden role="dialog" aria-label="Chat tư vấn với Yến">
+  <div class="chat-head"><span class="av">Y</span><div class="t"><b>Yến</b><span>Trợ lý AI tư vấn tuyển dụng · Green DTC RTO</span></div><button type="button" id="chatClose" aria-label="Đóng chat">×</button></div>
+  <div class="chat-log" id="chatLog" aria-live="polite"></div>
+  <div class="chips" id="chips"></div>
+  <form class="chat-form" id="chatForm"><input type="text" id="chatIn" placeholder="Nhập câu hỏi của bạn" autocomplete="off" aria-label="Câu hỏi"><button type="submit" id="chatSend">Gửi</button></form>
+  <div class="chat-note">Yến là trợ lý AI, có thể sai sót. Điều khoản chính thức theo hợp đồng.</div>
+</div>
+
+<script>
+(function(){
+  var KB = `Bạn là Yến, trợ lý AI tư vấn tuyển dụng tài xế của Green DTC RTO, một chương trình thuê để sở hữu (RTO) xe máy điện. Bạn nói chuyện với người đang cân nhắc đăng ký làm tài xế.
+
+CÁCH TRẢ LỜI
+- Tiếng Việt tự nhiên, thân thiện, xưng "em", gọi khách là "anh/chị" (hoặc "bạn" nếu khách xưng trẻ hơn). Mỗi câu trả lời 2 đến 5 câu ngắn, dễ đọc trên điện thoại. Không dùng markdown, không dùng dấu * hay #.
+- Hiểu ý khách, trả lời thẳng vào câu hỏi, có thể hỏi lại một câu để hiểu hoàn cảnh (đã có xe chưa, chạy bao nhiêu giờ mỗi ngày, ở khu vực nào).
+- Nếu khách hỏi bạn có phải người thật không, nói rõ em là trợ lý AI, và nhân viên thật sẽ gọi lại qua hotline.
+- Trung thực quan trọng hơn chốt đơn. Luôn nói rõ nghĩa vụ trả tiền xe mỗi tháng kể cả khi không chạy. Không hứa hẹn hay cam kết mức thu nhập. Không thúc ép khách cọc.
+- Chỉ dùng thông tin trong phần THÔNG TIN bên dưới. Điều gì không có (địa chỉ cụ thể, điều khoản chi tiết, bảo hiểm, bảo dưỡng, phạt trễ hạn, chính sách riêng, ưu đãi khác) thì nói em chưa có thông tin chính xác và mời khách gọi hoặc nhắn Zalo hotline 0794 866 822 để nhân viên xác nhận. Không bịa số liệu.
+- Không hỏi hoặc nhận số CCCD, số tài khoản, mật khẩu, mã OTP trong chat. Giấy tờ chỉ đưa khi gặp trực tiếp ký hợp đồng.
+- Không tự nhận là đối tác hay đại diện chính thức của Xanh SM hay VinFast. Nếu khách hỏi về điều này, nói em chưa có thông tin xác nhận và đề nghị hỏi nhân viên qua hotline.
+- Khi khách muốn đăng ký, hướng dẫn điền form Đăng ký tư vấn ở cuối trang hoặc nhắn Zalo 0794 866 822.
+- Giúp khách tính toán khi họ hỏi, nhưng nhắc là ước tính.
+
+THÔNG TIN
+Chương trình: thuê để sở hữu (RTO) xe máy điện, khu vực nhận đăng ký: TP. Hồ Chí Minh, Hà Nội, Bình Dương, Đồng Nai, Đà Nẵng. Hotline và Zalo: 0794 866 822.
+Tiền cọc: 2.000.000đ, được trừ vào kỳ thanh toán đầu tiên. Hủy trước khi nhận xe thì hoàn tiền cọc trong 3 ngày.
+Thời hạn: 12 kỳ thanh toán hằng tháng. Trả đủ 12 kỳ thì làm thủ tục sang tên, xe thuộc sở hữu của khách. Số tiền chi tiết ghi trong hợp đồng.
+Bắt buộc trả tiền xe mỗi tháng kể cả tháng không chạy.
+Các dòng xe (tên dòng xe thuộc VinFast):
+- Evo 200: 1.880.000đ mỗi tháng, tổng 12 kỳ 22.560.000đ.
+- Feliz S II: 2.300.000đ mỗi tháng, tổng 12 kỳ 27.600.000đ. Nhiều người chọn.
+- Klara S II: 2.500.000đ mỗi tháng, tổng 12 kỳ 30.000.000đ.
+Tổng chi trả chưa gồm tiền sạc, bảo hiểm tự chọn và chi phí cá nhân.
+Ước tính nhiên liệu: xe xăng khoảng 1.800.000đ mỗi tháng, xe điện sạc khoảng 396.000đ mỗi tháng, chênh khoảng 1.404.000đ.
+Máy tính thu nhập trên trang dùng giả định: doanh thu trung bình 38.000đ mỗi cuốc, phí nền tảng 15%, tiền sạc 396.000đ mỗi tháng. Công thức: còn lại = số cuốc x số ngày x doanh thu mỗi cuốc x 85% trừ tiền sạc trừ tiền trả xe. Ví dụ 18 cuốc mỗi ngày, 26 ngày: doanh thu gộp 17.784.000đ, sau phí 15.116.400đ, trừ sạc và tiền xe Feliz S II còn khoảng 12.420.400đ trước chi phí khác. Đây là ước tính, không cam kết. Chưa tính bảo dưỡng, gửi xe, điện thoại, thuế.
+Quy trình: 1) Đăng ký gửi họ tên và số điện thoại, nhân viên gọi lại. 2) Cọc 2.000.000đ, kiểm tra hồ sơ khi mang giấy tờ đến ký hợp đồng. 3) Nhận xe, được hướng dẫn dùng ứng dụng chạy xe. 4) Chạy và trả hằng tháng, đủ 12 kỳ thì sang tên.
+Giấy tờ: căn cước công dân và giấy tờ cần cho hợp đồng, đưa khi gặp trực tiếp.`;
+  var hist=[],busy=false,started=false;
+  var chatEl=document.getElementById('chat'),log=document.getElementById('chatLog'),fab=document.getElementById('chatFab'),
+      inp=document.getElementById('chatIn'),send=document.getElementById('chatSend'),chips=document.getElementById('chips'),sample=null;
+  function add(cls,text){var d=document.createElement('div');d.className='bub '+cls;d.textContent=text;log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
+  var QUICK=['Cọc rồi có được hoàn không?','Không chạy có phải trả tiền không?','Tôi chạy 6 tiếng mỗi ngày thì được bao nhiêu?','Chọn dòng xe nào phù hợp?'];
+  function showChips(){chips.innerHTML='';QUICK.forEach(function(q){var b=document.createElement('button');b.type='button';b.textContent=q;b.addEventListener('click',function(){ask(q)});chips.appendChild(b)})}
+  function openChat(){chatEl.hidden=false;fab.classList.remove('on');if(!started){started=true;add('bot','Chào anh/chị, em là Yến, trợ lý AI tư vấn tài xế của Green DTC RTO. Anh/chị muốn hỏi về tiền cọc, tiền xe mỗi tháng hay cách tính thu nhập ạ?');showChips()}setTimeout(function(){inp.focus()},50)}
+  function closeChat(){chatEl.hidden=true;fab.classList.add('on')}
+  async function ask(text){
+    text=(text||'').trim();if(!text||busy||!sample)return;
+    busy=true;send.disabled=true;chips.innerHTML='';inp.value='';
+    add('me',text);hist.push({role:'user',content:text});
+    var recent=hist.slice(-14);
+    var msgs=recent.map(function(m,i){return i===0&&m.role==='user'?{role:'user',content:KB+'\n\n---\nKhách nhắn:\n'+m.content}:m});
+    if(msgs[0].role!=='user'){msgs.shift();msgs[0]={role:'user',content:KB+'\n\n---\nKhách nhắn:\n'+msgs[0].content}}
+    var bub=add('bot wait','Yến đang trả lời...');
+    try{
+      var r=await sample(msgs,{cache:false,modelTier:'default',onText:function(t){bub.className='bub bot';bub.textContent=t.text;log.scrollTop=log.scrollHeight}});
+      var ans=(r&&r.text||'').trim()||'Em chưa trả lời được câu này. Anh/chị gọi hoặc nhắn Zalo 0794 866 822 giúp em nhé.';
+      bub.className='bub bot';bub.textContent=ans;hist.push({role:'assistant',content:ans});
+    }catch(err){
+      bub.className='bub bot';
+      bub.textContent=(err&&err.code==='rate_limited')?'Em đang nhận nhiều câu hỏi cùng lúc. Anh/chị chờ một lát rồi hỏi lại, hoặc nhắn Zalo 0794 866 822 nhé.':'Em chưa kết nối được lúc này. Anh/chị gọi hoặc nhắn Zalo 0794 866 822 để được tư vấn ngay nhé.';
+      hist.pop();
+    }
+    busy=false;send.disabled=false;log.scrollTop=log.scrollHeight;inp.focus();
+  }
+  document.getElementById('chatForm').addEventListener('submit',function(e){e.preventDefault();ask(inp.value)});
+  document.getElementById('chatClose').addEventListener('click',closeChat);
+  fab.addEventListener('click',openChat);
+  if(window.claude&&claude.use){claude.use('sample').then(function(s){if(s){sample=s;fab.classList.add('on')}}).catch(function(){})}
+})();
+</script>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var vnd=function(n){return Math.round(n).toLocaleString('vi-VN')+'đ'};
+
+  // ledger cells
+  var cells=$('cells'),h='';
+  for(var i=1;i<=12;i++){h+='<div class="cell"><small>Tháng '+i+'</small><b>2,3tr</b></div>'}
+  h+='<div class="cell own"><small>Sau kỳ thứ 12</small>Làm thủ tục sang tên xe cho bạn</div>';
+  cells.innerHTML=h;
+
+  // totals
+  $('t-evo').textContent=vnd(1880000*12);
+  $('t-feliz').textContent=vnd(2300000*12);
+  $('t-klara').textContent=vnd(2500000*12);
+
+  // calculator
+  var CHARGE=396000,FEE=0.15;
+  function calc(){
+    var trips=+$('trips').value,days=+$('days').value,fare=Math.max(0,+$('fare').value||0),rent=+$('rent').value;
+    $('o-trips').textContent=trips+' cuốc';
+    $('o-days').textContent=days+' ngày';
+    var gross=trips*days*fare,fee=gross*FEE,net=gross-fee-CHARGE-rent;
+    $('r-gross').textContent=vnd(gross);
+    $('r-fee').textContent='−'+vnd(fee);
+    $('r-charge').textContent='−'+vnd(CHARGE);
+    $('r-rent').textContent='−'+vnd(rent);
+    $('r-net').textContent=(net<0?'−':'')+vnd(Math.abs(net));
+    var low=net<=0;
+    $('result').className='result'+(low?' low':'');
+    $('r-note').textContent=low
+      ?'Với mức chạy này, doanh thu chưa đủ trả phí, tiền sạc và tiền xe. Bạn vẫn phải trả tiền xe đủ mỗi tháng.'
+      :'Bạn vẫn phải trả tiền xe mỗi tháng kể cả khi doanh thu thấp hơn mức này.';
+  }
+  ['trips','days','fare','rent'].forEach(function(id){$(id).addEventListener('input',calc)});
+  calc();
+
+  // register form -> prepared message
+  var form=$('form'),status=$('status'),out=$('out'),msg=$('msg'),text='';
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var name=$('f-name').value.trim(),phone=$('f-phone').value.replace(/[\s.\-]/g,'');
+    status.className='status';
+    if(!name){status.className='status err';status.textContent='Nhập họ và tên của bạn.';$('f-name').focus();return}
+    if(!/^(0|\+84)\d{9}$/.test(phone)){status.className='status err';status.textContent='Số điện thoại cần 10 chữ số, ví dụ 0912345678.';$('f-phone').focus();return}
+    text='Chào Green DTC RTO, mình muốn đăng ký thuê để sở hữu xe.\nHọ tên: '+name+'\nSĐT: '+phone+'\nKhu vực: '+$('f-area').value+'\nDòng xe: '+$('f-model').value;
+    msg.textContent=text;out.hidden=false;
+    status.textContent='Tin nhắn đã tạo. Sao chép rồi gửi qua Zalo để bên mình gọi lại.';
+  });
+  $('copy').addEventListener('click',function(){
+    var done=function(){status.className='status';status.textContent='Đã sao chép. Dán vào Zalo và gửi.'};
+    var fallback=function(){
+      var r=document.createRange();r.selectNodeContents(msg);var s=getSelection();s.removeAllRanges();s.addRange(r);
+      status.className='status';status.textContent='Tin nhắn đã được chọn. Nhấn giữ và chọn Sao chép.';
+    };
+    try{navigator.clipboard.writeText(text).then(done,fallback)}catch(err){fallback()}
+  });
+})();
+</script>
+
+</body>
+</html>
